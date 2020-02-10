@@ -1,0 +1,234 @@
+---
+output:
+  md_document: github_document
+---
+
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  comment = "#",
+  fig.path = "tools/README-",
+  fig.cap=""
+)
+```
+   
+# stepprofiler
+   
+   
+## Insrallation
+   
+   
+```{r, eval = FALSE}
+# Install
+if(!require(devtools)) install.packages("devtools")
+devtools::install_github("kassambara/stepprofiler")
+```
+
+   
+## Required package
+  
+```{r}
+library(DESeq2)
+library(tidyverse)
+library(stepprofiler)
+theme_set(theme_classic())
+```
+   
+   
+   
+## STEP 0: Display aivalable patterns
+  
+Available gene expression patterns:
+  
+```{r expression-patterns, fig.width=6, fig.height=3}
+patterns()
+```
+   
+   
+   
+## STEP 2: Import the data
+   
+Load the raw count, samples and gene annotation files. Note that the sample file contains a column named "group", which hold the different groups to be compared.
+   
+   
+```{r}
+set.seed(123)
+
+data.dir <- system.file("rnaseq", "multiclass",
+                        package = "stepprofiler")
+# Import raw count
+raw.count <- file.path(data.dir, "raw.count.txt") %>%
+  read.delim(row.names = 1)
+sample_n(raw.count, 5)
+
+# Import sample annotation
+samples <- file.path(data.dir, "samples.txt") %>%
+  read.delim(row.names = 1)
+sample_n(samples, 5)
+
+# Import gene annotation file
+gene.annotation <- file.path(data.dir, "gene.annotation.txt") %>%
+  read.delim(row.names = 1)
+sample_n(gene.annotation, 5)
+```
+    
+    
+## STEP 3: Run DESeq2 pipeline 
+   
+1. Put raw count data and samples annotation together, and specify the column name containing the groups to be compared:
+   
+   
+```{r, cache = TRUE}
+dds <- DESeqDataSetFromMatrix(
+  countData = raw.count, colData = samples, 
+  design = ~ group
+  )
+```
+   
+   
+2. Normalize the data for sequencing depth: 
+   
+```{r}
+dds <- estimateSizeFactors( dds)
+count.norm <- counts(dds, normalized = TRUE)
+```
+   
+   
+3. Run DESeq using multicore parallel computation for speed: 
+   
+```{r}
+library(BiocParallel)
+register(MulticoreParam(workers = 4) )
+dds <- DESeq(dds, parallel = TRUE)
+```
+
+   
+   
+## STEP 4: Define threshold for active gene expression
+    
+    
+The process is as follow:
+  
+1. Compute gene expression mean per sample groups
+2. Visualize the distribution of gene mean per sample groups
+3. Decide a cutoff above which a given gene can be considered as actively expressed in a particular group
+   
+  
+R function: `summarizeby()` [stepprofiler]: 
+   
+   
+```{r average-expression-distribution, fig.width=4, fig.height=3}
+# Compute gene mean expression
+gene.mean.by.grp <- count.norm %>%
+  summarizeby(samples$group, fun = mean) %>%
+  round(2) %>%
+  as.data.frame()
+
+# Create a tidy data frame for plotting
+gene.mean.by.grp <- gene.mean.by.grp %>%
+  mutate(gene.id = row.names(.)) %>%
+  select(gene.id, everything()) %>%
+  as_data_frame()
+# Print mean expression
+gene.mean.by.grp
+
+# Plot the distribution of mean expression
+# per group
+gene.mean.by.grp %>%
+  gather(key = "group", value = "mean.expr", -gene.id) %>%
+  filter(mean.expr != 0) %>%
+  ggplot(aes(log2(mean.expr+1))) +
+  geom_density(aes(color = group))+
+  geom_vline(xintercept = 6, linetype = "dashed")
+```
+
+    
+The distribution of the average normalized gene read counts for each cell subpopulation is shown.   
+  
+The distribution is bimodal for all cell subpopulations, defining one group of genes with average normalized read counts < 64 and another group with average normalized read counts > = 64. 
+  
+Therefore, we defined 64 normalized read counts as a cutoff to define transcripts with active expression.  
+   
+   
+## Temporal patterns of gene expression
+   
+   
+```{r, cache = TRUE}
+# pairewise comparison
+pwc <- dds %>% pairewise_compare(
+  "group", c("BM",  "prePB", "PB", "PC"),
+  active_exprs = 64, fc = 1, verbose = TRUE
+  )
+```
+
+
+## one-step-up and one-step-down genes
+
+
+Create the plots: 
+
+```{r}
+# One step up genes
+step_up <- one_step_up(pwc, fc = 2)
+step_down <- one_step_down(pwc, fc = 2)
+# Plot profile
+step_up_plots <- plot(
+  step_up, transformby ="firststep", 
+  color = "#B31B21", size = c(0.1, 1),
+  getRegFunc = get_human_regulators,
+  print_plot = FALSE
+  )
+step_down_plots <- plot(
+  step_down, transformby ="firststep",  
+  color = "#1465AC", size = c(0.1, 1), 
+  getRegFunc = get_human_regulators, print_plot = FALSE
+  )
+```
+     
+     
+Display the plots: 
+      
+```{r, fig.width = 4, fig.heigh = 3, fig.show='hold'}
+for(i in 1:length(step_up_plots)) {
+  print(step_up_plots[[i]])
+  print(step_down_plots[[i]])
+}
+```
+
+
+## Impulse-up and Impulse-down genes
+   
+   
+   
+Create the plots:  
+
+```{r}
+# Get genes
+impul_up <- impulsed_up(pwc, fc = 2)
+impul_down <- impulsed_down(pwc, fc = 2)
+# Plot profile
+impul_up_plots <- plot(
+  impul_up, transformby ="firststep", 
+  color = "#B31B21", size = c(0.1, 1),
+  getRegFunc = get_human_regulators, print_plot = FALSE
+  )
+impul_down_plots <- plot(
+  impul_down, transformby ="firststep",  
+  color = "#1465AC", size = c(0.1, 1),
+  getRegFunc = get_human_regulators, print_plot = FALSE
+  )
+```
+
+
+Display the plots:
+   
+  
+```{r, fig.width = 4, fig.height = 3, fig.show='hold'}
+for(i in 1:length(impul_up_plots)) {
+  print(impul_up_plots[[i]])
+  print(impul_down_plots[[i]])
+}
+```

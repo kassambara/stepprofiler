@@ -1,0 +1,41 @@
+eazyRNAseq 1.0.0
+-------------------------
+
+NEW FEATURE
+
+## Summarize expression
+
+Summarize gene expression data by computing some descriptive statistics.
+
+* summarize(): computes descriptive statistics for expression data.
+
+* summarizeby(): summarizes expression data by groups and by one descriptive statistic. For example computes, the average expression of each gene by sample groups.
+
+* summarizebys(): summarizes expression data by groups and by multiple descriptive statistics at the same time.
+For example computes, the mean expression and the SD of each gene by sample groups.
+
+
+## Differential expression using limma package
+
+* lm_fit(): Fit easily linear model for gene expression data using limma::lmFit()
+* lm_results(): Extract results from lm_fit analysis. Compared to the function topTable(), it performs an independent filtering as described by Bourgon et al., PNAS 2010.
+* results_names(): Returns the names of the estimated effects (coefficents) of the model.
+
+
+## Differentially expressed genes between groups
+
+
+* get_diff_1(): Common up/down regulated genes in one group compared to each of the other groups in pairwise analysis.
+
+* get_diff_2(): Differentially expressed genes between two groups in a simple two class analysis.
+
+* get_diff_n(): Differentially expressed genes between multiple groups using pairewise analysis or not.
+
+* get_diff_pwc(): Pairwise comparisons (pwc) between sample classes in grp1 (e.g.: grp1 = c("A", "B", ...)) and sample classes in grp2 (e.g.: grp2 = c("C", "D", ...) ).
+
+* significant(): Take an object of class "get_diff", "lm_results" or "DESeqResult" and returns significantly differentially expressed genes with a given cutoff for false discovery rate and fold change.
+
+
+## Classes
+
+* DE_Results: Extends the DataFrame class of S4Vectors. It is used by lm_results to wrap up the results table.

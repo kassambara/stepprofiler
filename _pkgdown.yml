@@ -1,0 +1,12 @@
+templates:
+  params:
+    bootswatch: flatly
+
+reference:
+  - title: RNA Sequencing Workflow
+    desc:  Workflow for analyzing RNAseq data
+    contents:
+      - patterns
+      - summarizeby
+      - get_diff
+
