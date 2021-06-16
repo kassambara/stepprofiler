@@ -9,34 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 ```
   
-
-```{r}
-# Displaying tables (HTML/PDF)  --------------------
-# PDF, more options -> https://haozhu233.github.io/kableExtra/awesome_table_in_pdf.pdf
-view_table <- function(data, caption = NULL, 
-                       output = c("html", "html"), nrow = 6, ...)
-  {
-  library("DT") 
-  library(knitr)
-  library(kableExtra)
-  output <- match.arg(output)
-  if(output == "html") {
-    require("DT")
-    datatable(
-      data, caption = caption,
-      extensions = c('ColReorder', 'Responsive'),
-      options = list(dom = 'Rlfrtip')
-      )
-  }
-  else if (output == "pdf"){
-    require("knitr")
-    require("kableExtra")
-    kable(data, format = "latex", booktabs = TRUE, caption = caption, ...) %>%
-    kable_styling(latex_options = c("striped", "hold_position", "repeat_header"))
-  }
-}
-```
-
+     
      
 ## STEP 1: Install required R packages
      
