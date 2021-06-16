@@ -1,0 +1,107 @@
+---
+title: "Comparing Two Independent Groups"
+author: "Alboukadel KASSAMBARA"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+  
+     
+     
+## STEP 1: Install required R packages
+     
+     
+The R package `stepprofiler` is required to follow this tutorial. 
+  
+  
+```{block, type = "warning"}
+You need to install it only once on your computer.
+```
+  
+     
+Copy and paste the following code in R to install dependencies:
+   
+   
+```{r, eval = FALSE}
+if(!require(devtools)) install.packages("devtools")
+devtools::install_github("kassambara/stepprofiler")
+```
+    
+    
+    
+## STEP 2: Load the required R package
+    
+    
+```{r}
+library("stepprofiler")
+```
+
+      
+      
+## STEP 3:  Import your data
+      
+   
+The following files are required:  
+   
+- `count.txt` containing the rnaseq raw count data (gene expression)
+- `samples.txt` containing the samples groups
+- `annotation.txt` contains the gene annotation
+
+
+
+
+```{r, eval = FALSE}
+# Import the data
+data <- import_rnaseq(directory = dirname(file.choose()))
+# Inspect the data
+print(data)
+```
+
+
+
+```{r, echo = FALSE, comment=""}
+# Import the data
+data <- import_rnaseq(directory = "data")
+print(data)
+```
+
+
+## STEP 4: Compare two independent groups
+
+
+```{r,  comment=""}
+# Compare two groups 
+results <- compare_two_groups(
+  data, grp1 = "prePB", grp2 = "BM",
+  fold_change = 2
+)
+
+# Inspect the significant results
+print(results$significant)
+```
+    
+    
+    
+## STEP 5: Export significant results
+
+```{r, eval = FALSE}
+export_significant(results)
+```
+
+    
+ 
+## STEP 6: Plot top genes
+   
+   
+```{r}
+if(!require("ggpubr")) install.packages("ggpubr")
+library(ggpubr)
+ggmaplot(results$all_results, main = "Top Genes",
+    top = 20, fdr = 0.05, fc = 2, 
+   genenames = as.vector(results$all_results$name),
+   size = 0.4
+  )
+```

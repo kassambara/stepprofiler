@@ -30,6 +30,7 @@ NULL
 #' @importFrom stats quantile
 #' @importFrom stats sd
 #' @importFrom graphics abline legend plot text
+#' @importFrom magrittr %>%
 
 # Create a directory
 create_dir <- function(path){

@@ -27,7 +27,11 @@ Imports:
     utils,
     dplyr,
     SummarizedExperiment,
-    DESeq2
+    DESeq2,
+    readr,
+    BiocParallel,
+    tibble,
+    magrittr
 Suggests:
     BiocInstaller,
     clusterProfiler,
@@ -47,6 +51,7 @@ Collate:
     'expressed.R'
     'utilities_diffexprs.R'
     'utilities.R'
+    'ezrnaseq.R'
     'get_diff.R'
     'get_regulators.R'
     'human.ee.R'

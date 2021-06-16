@@ -344,8 +344,8 @@ significant <- function(object, fdr = 0.05, fc = 1.5,
 mark_significant <- function(res, log2.foldchange = 0, pvalue = 0.05){
   # Check if lfc is above cutoff
   # Consider lfc sign to decide up and down genes
-  lfc.ok <- (abs(res$lfc)) >= log2.foldchange
-  lfc.sign <- sign(res$lfc)
+  lfc.ok <- (abs(res$log2FoldChange)) >= log2.foldchange
+  lfc.sign <- sign(res$log2FoldChange)
   # Check if pvalue is below 0.05
   pval.ok <- ifelse(
     is.na(res$padj), FALSE,
