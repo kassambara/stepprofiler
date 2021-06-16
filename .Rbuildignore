@@ -7,3 +7,4 @@
 ^_pkgdown\.yml$
 ^README_cache$
 ^\.github$
+^usage_examples$
