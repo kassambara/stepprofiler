@@ -5,7 +5,9 @@
 \alias{human.ee}
 \alias{h.ee}
 \title{Human epigenetic enzymes}
-\format{A data frame with 4 columns and 212 rows coorresponding to genes.}
+\format{
+A data frame with 4 columns and 212 rows coorresponding to genes.
+}
 \source{
 Yang Z, Jones A, Widschwendter M, Teschendorff AE.
 An integrative pan-cancer-wide analysis of epigenetic enzymes reveals universal patterns of epigenomic deregulation in cancer.

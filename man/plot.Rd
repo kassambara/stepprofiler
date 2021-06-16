@@ -7,15 +7,30 @@
 \alias{gglineplot_by}
 \title{Graphs}
 \usage{
-ggbarplot(x, title = "", xlab = "", ylab = "", fill = "steelblue",
-  color = "steelblue", sort.value = c("none", "desc", "asc"),
-  top = Inf, ...)
+ggbarplot(
+  x,
+  title = "",
+  xlab = "",
+  ylab = "",
+  fill = "steelblue",
+  color = "steelblue",
+  sort.value = c("none", "desc", "asc"),
+  top = Inf,
+  ...
+)
 
 ggboxplot(data, xName, yName, fill = "steelblue", color = "black")
 
-gglineplot_by(exprs, groups, log_it = TRUE, title = "",
-  labels = FALSE, xlab = "Groups",
-  ylab = "log2 fold change compared to the control", ...)
+gglineplot_by(
+  exprs,
+  groups,
+  log_it = TRUE,
+  title = "",
+  labels = FALSE,
+  xlab = "Groups",
+  ylab = "log2 fold change compared to the control",
+  ...
+)
 }
 \arguments{
 \item{x}{a numeric vector}

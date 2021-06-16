@@ -12,9 +12,18 @@
 \alias{pathways}
 \title{StepProfiler: Extract temporally Up- and Down- regulated genes using DESeq2.}
 \usage{
-pairewise_compare(dds, factor, grps, alpha = 0.05, fc = 1,
-  active_exprs = 1, count.norm = NULL, exprs.norm = NULL,
-  verbose = TRUE, ...)
+pairewise_compare(
+  dds,
+  factor,
+  grps,
+  alpha = 0.05,
+  fc = 1,
+  active_exprs = 1,
+  count.norm = NULL,
+  exprs.norm = NULL,
+  verbose = TRUE,
+  ...
+)
 
 one_step_up(pwc, fc = 1.5, verbose = TRUE)
 
@@ -24,14 +33,24 @@ impulsed_up(pwc, fc = 1.5, verbose = TRUE)
 
 impulsed_down(pwc, fc = 1.5, verbose = TRUE)
 
-\method{plot}{stepgenes}(x, transformby = c("firststep", "basemean",
-  "standardize", "none"), size = c(0.2, 1), getRegFunc = NULL,
-  print_plot = TRUE, ...)
+\method{plot}{stepgenes}(
+  x,
+  transformby = c("firststep", "basemean", "standardize", "none"),
+  size = c(0.2, 1),
+  getRegFunc = NULL,
+  print_plot = TRUE,
+  ...
+)
 
 \method{summary}{stepgenes}(object, ...)
 
-pathways(object, gn_id_type = "ENSEMBL", pvalueCutoff = 0.05,
-  OrgDb = "org.Hs.eg.db", verbose = TRUE)
+pathways(
+  object,
+  gn_id_type = "ENSEMBL",
+  pvalueCutoff = 0.05,
+  OrgDb = "org.Hs.eg.db",
+  verbose = TRUE
+)
 }
 \arguments{
 \item{dds}{an object of class DESeqDataSet containing the diff_exprs of the function DESeq().}

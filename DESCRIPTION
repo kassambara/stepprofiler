@@ -40,6 +40,7 @@ BugReports: https://github.com/kassambara/stepprofiler/issues
 biocViews: Software, Visualization, Sequencing
 Repository: Bioconductor
 Collate:
+    'ALL_bcrneg.R'
     'AllClasses.R'
     'biomart.hs.genes.R'
     'summarize.R'
@@ -56,4 +57,4 @@ Collate:
     'plot_MA.R'
     'utilities_stepProfiler.R'
     'stepProfiler.R'
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.0

@@ -9,21 +9,63 @@
 \alias{significant}
 \title{Differential Expression Between Groups}
 \usage{
-get_diff_1(dds, factor, grp1, grp2 = NULL, alpha = 0.05, fc = 1.5,
-  active_exprs = 1, count.norm = NULL, exprs.norm = NULL,
-  verbose = TRUE, ...)
+get_diff_1(
+  dds,
+  factor,
+  grp1,
+  grp2 = NULL,
+  alpha = 0.05,
+  fc = 1.5,
+  active_exprs = 1,
+  count.norm = NULL,
+  exprs.norm = NULL,
+  verbose = TRUE,
+  ...
+)
 
-get_diff_2(dds, factor, grp1, grp2, alpha = 0.05, fc = 1.5,
-  active_exprs = 1, count.norm = NULL, exprs.norm = NULL,
-  verbose = TRUE, ...)
+get_diff_2(
+  dds,
+  factor,
+  grp1,
+  grp2,
+  alpha = 0.05,
+  fc = 1.5,
+  active_exprs = 1,
+  count.norm = NULL,
+  exprs.norm = NULL,
+  verbose = TRUE,
+  ...
+)
 
-get_diff_n(dds, factor, grp1, grp2 = NULL, alpha = 0.05, fc = 1.5,
-  active_exprs = 1, count.norm = NULL, exprs.norm = NULL,
-  merge = FALSE, verbose = TRUE, ...)
+get_diff_n(
+  dds,
+  factor,
+  grp1,
+  grp2 = NULL,
+  alpha = 0.05,
+  fc = 1.5,
+  active_exprs = 1,
+  count.norm = NULL,
+  exprs.norm = NULL,
+  merge = FALSE,
+  verbose = TRUE,
+  ...
+)
 
-get_diff_pwc(dds, factor, grp1, grp2 = NULL, alpha = 0.05, fc = 1.5,
-  active_exprs = 1, count.norm = NULL, exprs.norm = NULL,
-  merge = FALSE, verbose = TRUE, ...)
+get_diff_pwc(
+  dds,
+  factor,
+  grp1,
+  grp2 = NULL,
+  alpha = 0.05,
+  fc = 1.5,
+  active_exprs = 1,
+  count.norm = NULL,
+  exprs.norm = NULL,
+  merge = FALSE,
+  verbose = TRUE,
+  ...
+)
 
 significant(object, fdr = 0.05, fc = 1.5, orderby = c("padj", "lfc"))
 }

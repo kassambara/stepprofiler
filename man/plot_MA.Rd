@@ -6,11 +6,24 @@
 \alias{plot.DE_Results}
 \title{MA-plot from means and log fold changes}
 \usage{
-plot_MA(x, fdr = 0.05, fc = 1.5, detection_call = NULL,
-  ylim = NULL, colNonSig = "darkgray", colUp = "#BC002A",
-  colDown = "#16614E", colLine = "black", log = "x", cex = 0.45,
-  xlab = "Mean expression", ylab = "Log2 fold change",
-  addlegend = TRUE, highlight = 10, ...)
+plot_MA(
+  x,
+  fdr = 0.05,
+  fc = 1.5,
+  detection_call = NULL,
+  ylim = NULL,
+  colNonSig = "darkgray",
+  colUp = "#BC002A",
+  colDown = "#16614E",
+  colLine = "black",
+  log = "x",
+  cex = 0.45,
+  xlab = "Mean expression",
+  ylab = "Log2 fold change",
+  addlegend = TRUE,
+  highlight = 10,
+  ...
+)
 
 \method{plot}{DESeqResults}(x, ...)
 

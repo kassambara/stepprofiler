@@ -1,4 +1,6 @@
-#' MA-plot from means and log fold changes
+#' @include utilities.R
+NULL
+#'  MA-plot from means and log fold changes
 #'
 #' @description
 #' Make MA-plot which is a scatter plot of log2 fold changes (on the y-axis)

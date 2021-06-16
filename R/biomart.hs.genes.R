@@ -8,8 +8,4 @@
 #' @aliases hs.genes
 #' @docType data
 #' @usage data(biomart.hs.genes)
-#' @examples
-#' \donttest{
-#'
-#' }
 NULL

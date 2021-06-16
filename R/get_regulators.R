@@ -17,6 +17,16 @@
 #' @export
 get_human_regulators <- function(ids, id_type = "ensembl", keep.all = TRUE){
 
+  biomart.hs.genes <- get(
+    data("biomart.hs.genes", package= "stepprofiler", envir = environment())
+  )
+  human.ee <- get(
+    data("human.ee", package= "stepprofiler", envir = environment())
+  )
+  human.tf <- get(
+    data("human.tf", package= "stepprofiler", envir = environment())
+  )
+
   d <- ids
   if(!id_type %in% c("ensembl", "name"))
     stop("Allowed values for id_type are 'ensembl' or 'name'.")

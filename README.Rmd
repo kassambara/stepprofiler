@@ -15,6 +15,9 @@ knitr::opts_chunk$set(
 )
 ```
    
+   
+[![R build status](https://github.com/kassambara/stepprofiler/workflows/R-CMD-check/badge.svg)](https://github.com/kassambara/stepprofiler/actions)
+ 
 # stepprofiler
    
    

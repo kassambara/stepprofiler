@@ -1,4 +1,7 @@
 
+[![R build
+status](https://github.com/kassambara/stepprofiler/workflows/R-CMD-check/badge.svg)](https://github.com/kassambara/stepprofiler/actions)
+
 # stepprofiler
 
 ## Insrallation
@@ -43,34 +46,34 @@ data.dir <- system.file("rnaseq", "multiclass",
 raw.count <- file.path(data.dir, "raw.count.txt") %>%
   read.delim(row.names = 1)
 sample_n(raw.count, 5)
-#   BM1 BM2 BM3 prePB1 prePB2 prePB3  PB1  PB2  PB3 PC1 PC2  PC3
-# 1   0   0   0      0      0      0    0    0    0   0   0    0
-# 2  12   0   6      8      7     12    5    1    5   2   1    7
-# 3   0   2   1      0      0      0    3    0    0   0   0    0
-# 4 760 722 554  10977   5035   3621 3798 1812 1359 894 898 1831
-# 5   0   0   1      0      0      0    0    0    0   0   0    0
+#                 BM1 BM2 BM3 prePB1 prePB2 prePB3 PB1 PB2 PB3 PC1 PC2 PC3
+# ENSG00000120594   8   2   5      1      2      2   0   0   0   0   1   1
+# ENSG00000265344   0   0   0      0      0      0   2   0   0   0   0   0
+# ENSG00000228444   1   1   1      0      0      4   0   2   0   0   0   8
+# ENSG00000185666   2   1   4      4      1      0   0   0   0   0   0   2
+# ENSG00000256288   1   0   0      0      0      0   0   0   0   0   0   0
 
 # Import sample annotation
 samples <- file.path(data.dir, "samples.txt") %>%
   read.delim(row.names = 1)
 sample_n(samples, 5)
-#   group
-# 1    BM
-# 2 prePB
-# 3    PB
-# 4 prePB
-# 5 prePB
+#        group
+# PC1       PC
+# BM2       BM
+# prePB3 prePB
+# prePB2 prePB
+# prePB1 prePB
 
 # Import gene annotation file
 gene.annotation <- file.path(data.dir, "gene.annotation.txt") %>%
   read.delim(row.names = 1)
 sample_n(gene.annotation, 5)
-#           ensembl   name
-# 1 ENSG00000254770 OR4D7P
-# 2 ENSG00000256498       
-# 3 ENSG00000251059       
-# 4 ENSG00000254681 PKD1P5
-# 5 ENSG00000133704   IPO8
+#                         ensembl      name
+# ENSG00000229723 ENSG00000229723 LINC01054
+# ENSG00000240427 ENSG00000240427  RPS26P34
+# ENSG00000019582 ENSG00000019582      CD74
+# ENSG00000016082 ENSG00000016082      ISL1
+# ENSG00000234985 ENSG00000234985
 ```
 
 ## STEP 3: Run DESeq2 pipeline

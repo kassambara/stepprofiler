@@ -19,7 +19,7 @@ NULL
 #' @importFrom ggplot2 element_blank
 #' @importFrom grid arrow
 #' @importFrom grid unit
-#' @importFrom utils data
+#' @importFrom utils data install.packages installed.packages
 #' @importFrom utils head
 #' @importFrom utils read.delim
 #' @importFrom utils write.table
@@ -29,6 +29,7 @@ NULL
 #' @importFrom stats p.adjust
 #' @importFrom stats quantile
 #' @importFrom stats sd
+#' @importFrom graphics abline legend plot text
 
 # Create a directory
 create_dir <- function(path){

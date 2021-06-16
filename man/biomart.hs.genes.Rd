@@ -13,8 +13,3 @@ Biomart homo sapiens gene annotation data downloaded from
 biomart website (http://www.ensembl.org/biomart/, 2015-10-09). Can be used for a fast annotation of genes
 compared to R/Bioconductor biomaRt package.
 }
-\examples{
-\donttest{
-
-}
-}

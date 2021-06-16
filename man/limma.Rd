@@ -9,8 +9,16 @@
 \usage{
 lm_fit(eset, design, logged2)
 
-lm_results(object, contrast, independentFiltering = TRUE, alpha = 0.05,
-  filter, theta, pAdjustMethod = "BH", ...)
+lm_results(
+  object,
+  contrast,
+  independentFiltering = TRUE,
+  alpha = 0.05,
+  filter,
+  theta,
+  pAdjustMethod = "BH",
+  ...
+)
 
 results_names(object)
 }

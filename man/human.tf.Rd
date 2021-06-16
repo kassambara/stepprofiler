@@ -5,7 +5,9 @@
 \alias{human.tf}
 \alias{h.tf}
 \title{Census of human transcription factors}
-\format{A data frame with 6 columns and 1391 rows coorresponding to genes.}
+\format{
+A data frame with 6 columns and 1391 rows coorresponding to genes.
+}
 \source{
 Juan M. Vaquerizas, Sarah K. Kummerfeld, Sarah A. Teichmann & Nicholas M. Luscombe.
 A census of human transcription factors: function, expression and evolution.
