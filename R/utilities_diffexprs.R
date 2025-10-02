@@ -110,6 +110,8 @@
     res<- as.data.frame(round(DESeq2::counts(dds, normalized=TRUE),2))
   else if("lm_fit" %in% class(dds))
     res <- dds$data
+  else if(inherits(dds, "SummarizedExperiment"))
+    res <- as.data.frame(SummarizedExperiment::assay(dds))
   else stop("Can't handle an object of class ", class(dds))
   res
 }
@@ -255,15 +257,31 @@
 # dds an object of class DESeqResults as provided by DESeq2
 # factor, grp1, grp2, active_exprs, count.norm: see ?get_diff
 # exprs.norm an alias of count.norm
+# detection_matrix: matrix/data.frame with proteins as rows, samples as columns, values 0/1
 .get_detection_call <- function(dds, factor, grp1, grp2 = NULL,
-                                active_exprs = 1, count.norm = NULL, exprs.norm = NULL){
+                                active_exprs = 1, count.norm = NULL, exprs.norm = NULL,
+                                detection_matrix = NULL){
 
   if(is.null(count.norm))  count.norm <- exprs.norm
 
   samples <- .samples(dds)
   detection_call <- rep(1, nrow(dds))
   names(detection_call) <- rownames(dds)
-  if(!is.null(active_exprs)){
+
+  # Priority 1: Use detection_matrix if provided
+  if(!is.null(detection_matrix)){
+    sples <- subset(samples, samples[, factor] %in% c(grp1, grp2) )
+    grps <- droplevels(sples[, factor])
+
+    # Extract detection calls for relevant samples
+    detection_subset <- detection_matrix[, rownames(sples), drop = FALSE]
+
+    # Check if detected in at least one of the comparison groups
+    detection_call <- apply(detection_subset, 1, max)[rownames(dds)]
+    detection_call[is.na(detection_call)] <- 0  # Handle any NAs as not detected
+  }
+  # Priority 2: Use active_exprs threshold (existing logic)
+  else if(!is.null(active_exprs)){
     # Detection call: Expressed genes in at least one groups
     if(is.null(count.norm))
       count.norm <- .data_norm(dds)
@@ -275,6 +293,8 @@
     detection_call <- apply(expressed(exprs,  grps, cutoff = active_exprs), 1, max)[rownames(dds)]
     detection_call <- detection_call
   }
+  # Priority 3: Default - all detected (detection_call already set to 1)
+
   return(detection_call)
 }
 

@@ -39,6 +39,9 @@ NULL
 #' @param count.norm a data frame containing the normalized count as provided by DESeq2.
 #' Only used for computing the detection call when active_expression is not NULL.
 #' @param exprs.norm a data frame containing the normalized gene expression data. An alias of count.norm.
+#' @param detection_matrix a matrix or data frame with proteins as rows and samples as columns,
+#' containing detection calls (0 = not detected, 1 = detected). If provided, takes priority over
+#' active_exprs threshold computation. Useful for proteomics data where detection calls may be pre-computed.
 #' @param merge a logical value. Default is FALSE. Used only in multiclass comparison cases (seee details section).
 #' @param verbose logical value; if TRUE the progression is shown. Default is TRUE.
 #'
@@ -119,7 +122,7 @@ NULL
 #' @export
 get_diff_1 <- function(dds, factor, grp1, grp2 = NULL,
                      alpha = 0.05, fc = 1.5, active_exprs = 1, count.norm = NULL, exprs.norm = NULL,
-                     verbose = TRUE, ...)
+                     detection_matrix = NULL, verbose = TRUE, ...)
 {
 
   if (!missing(count.norm)) {
@@ -138,12 +141,12 @@ get_diff_1 <- function(dds, factor, grp1, grp2 = NULL,
   if(length(grp2) == 1){
     res <- get_diff_2(dds, factor = factor, grp1 = grp1, grp2 = grp2,
                alpha = alpha, fc = fc, active_exprs = active_exprs, exprs.norm = exprs.norm,
-               verbose = verbose, ...)
+               detection_matrix = detection_matrix, verbose = verbose, ...)
     res$significance <- .get_significance(res, alpha = alpha, fc = fc)
   }
   else res <- get_diff_1 (dds, factor = factor, grp1 = grp1, grp2 = grp2,
                             alpha = alpha, fc = fc, active_exprs = active_exprs,
-                            exprs.norm = exprs.norm, verbose = verbose, ...)
+                            exprs.norm = exprs.norm, detection_matrix = detection_matrix, verbose = verbose, ...)
 
   res <- .set_mcols(res) # description of column names
   res
@@ -156,7 +159,7 @@ get_diff_1 <- function(dds, factor, grp1, grp2 = NULL,
 #' @export
 get_diff_2 <- function(dds, factor, grp1, grp2,
                        alpha = 0.05, fc = 1.5, active_exprs = 1, count.norm = NULL, exprs.norm = NULL,
-                       verbose = TRUE, ...)
+                       detection_matrix = NULL, verbose = TRUE, ...)
 {
 
   # Deprecated arguments
@@ -189,7 +192,7 @@ get_diff_2 <- function(dds, factor, grp1, grp2,
   gene.id <- rownames(res)
   # Mark genes that are actively expressed
   res$detection_call <- dds %>% .get_detection_call(
-    factor, grp1, grp2,active_exprs, exprs.norm ) %>%
+    factor, grp1, grp2, active_exprs, exprs.norm, detection_matrix ) %>%
     .[gene.id]
 
   # Mark significant genes
@@ -202,7 +205,7 @@ get_diff_2 <- function(dds, factor, grp1, grp2,
 #' @rdname get_diff
 #' @export
 get_diff_n <- function(dds, factor, grp1, grp2 = NULL, alpha = 0.05, fc = 1.5,
-                        active_exprs = 1, count.norm = NULL, exprs.norm = NULL, merge = FALSE,
+                        active_exprs = 1, count.norm = NULL, exprs.norm = NULL, detection_matrix = NULL, merge = FALSE,
                        verbose = TRUE, ...)
 {
 
@@ -219,19 +222,19 @@ get_diff_n <- function(dds, factor, grp1, grp2 = NULL, alpha = 0.05, fc = 1.5,
   if(length(grp1) == 1 & length(grp2) == 1)
     res <- get_diff_2(dds, factor = factor, grp1 = grp1, grp2 = grp2,
                       alpha = alpha,  fc = fc, active_exprs = active_exprs,
-                      exprs.norm = exprs.norm, verbose = verbose, ...)
+                      exprs.norm = exprs.norm, detection_matrix = detection_matrix, verbose = verbose, ...)
   else if(merge){
     res <- .results(dds, alpha = alpha,
                     contrast = list(paste0(factor, grp1), paste0(factor, grp2) ), ...)
 
     res$detection_call <- .get_detection_call(dds, factor, grp1, grp2,
-                                              active_exprs, exprs.norm )[rownames(res)]
+                                              active_exprs, exprs.norm, detection_matrix )[rownames(res)]
     res$significance <- .get_significance(res, alpha = alpha, fc = fc)
     res <- structure(res, class = c(class(res), "get_diff"))
   }
   else if(!merge) res <- get_diff_pwc (dds, factor = factor, grp1 = grp1, grp2 = grp2,
                         alpha = alpha, fc = fc, active_exprs = active_exprs,
-                        exprs.norm = exprs.norm, verbose = verbose, ...)
+                        exprs.norm = exprs.norm, detection_matrix = detection_matrix, verbose = verbose, ...)
 
   res <- .set_mcols(res) # description of column names
   res
@@ -241,7 +244,7 @@ get_diff_n <- function(dds, factor, grp1, grp2 = NULL, alpha = 0.05, fc = 1.5,
 #' @rdname get_diff
 #' @export
 get_diff_pwc <- function(dds, factor, grp1, grp2 = NULL, alpha = 0.05, fc = 1.5,
-                         active_exprs = 1, count.norm = NULL, exprs.norm = NULL, merge = FALSE,
+                         active_exprs = 1, count.norm = NULL, exprs.norm = NULL, detection_matrix = NULL, merge = FALSE,
                          verbose = TRUE, ...)
 {
 
@@ -258,17 +261,17 @@ get_diff_pwc <- function(dds, factor, grp1, grp2 = NULL, alpha = 0.05, fc = 1.5,
   if(merge)
     res <- get_diff_n(dds, factor, grp1, grp2, alpha = alpha, fc = fc,
                       active_exprs = active_exprs,
-                      exprs.norm = exprs.norm, merge = TRUE, verbose = verbose, ...)
+                      exprs.norm = exprs.norm, detection_matrix = detection_matrix, merge = TRUE, verbose = verbose, ...)
 
   else if(length(grp1) == 1){
     if(length(grp2) == 1)
       res <- get_diff_2(dds, factor = factor, grp1 = grp1, grp2 = grp2,
                         alpha = alpha, fc = fc, active_exprs = active_exprs,
-                        exprs.norm = exprs.norm, verbose = verbose, ...)
+                        exprs.norm = exprs.norm, detection_matrix = detection_matrix, verbose = verbose, ...)
     else if(is.null(grp2) | length(grp2) >= 2)
       res <- get_diff_pwc(dds, factor = factor, grp1 = grp1, grp2 = grp2,
                         alpha = alpha, fc = fc, active_exprs = active_exprs,
-                        exprs.norm = exprs.norm, verbose = verbose, ...)
+                        exprs.norm = exprs.norm, detection_matrix = detection_matrix, verbose = verbose, ...)
   }
   else{
     ids <- rownames(dds)
@@ -276,7 +279,7 @@ get_diff_pwc <- function(dds, factor, grp1, grp2 = NULL, alpha = 0.05, fc = 1.5,
     # the adjusted pvalue is replaced
     res <- get_diff_n(dds, factor, grp1, grp2, alpha = alpha,
                       active_exprs = active_exprs, fc = fc,
-                      exprs.norm = exprs.norm, merge = TRUE, verbose = verbose, ...)
+                      exprs.norm = exprs.norm, detection_matrix = detection_matrix, merge = TRUE, verbose = verbose, ...)
     res <- res[ids, , drop = FALSE]
 
     # Pairwise comparison: Compare each element in grp1 to each of elements in grp2
