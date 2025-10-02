@@ -1,4 +1,6 @@
 #' @importClassesFrom S4Vectors DataFrame
+#' @importFrom methods setClass new
+#' @importFrom S4Vectors DataFrame
 
 #' @rdname DE_Results
 #' @export
@@ -21,6 +23,8 @@ DE_Results <- function(DataFrame) {
   if (!is(DataFrame, "DFrame")) DataFrame <- S4Vectors::DataFrame(DataFrame)
   new("DE_Results", df = DataFrame)
 }
+
+# No S4 methods defined - using slot access directly
 
 
 

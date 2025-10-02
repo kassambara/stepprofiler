@@ -36,10 +36,10 @@ Imports RNAseq data contained in a directory.
 }
 \section{Functions}{
 \itemize{
-\item \code{import_rnaseq}: Import RNAseq data
+\item \code{import_rnaseq()}: Import RNAseq data
 
-\item \code{compare_two_groups}: Compare two groups
+\item \code{compare_two_groups()}: Compare two groups
 
-\item \code{export_significant}: Export significant results
+\item \code{export_significant()}: Export significant results
+
 }}
-

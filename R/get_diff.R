@@ -191,7 +191,7 @@ get_diff_2 <- function(dds, factor, grp1, grp2,
   res <- dds %>% .results(c(factor, grp1, grp2), alpha = 0.05, ...)
   gene.id <- rownames(res)
   # Mark genes that are actively expressed
-  res$detection_call <- dds %>% .get_detection_call(
+  res@df$detection_call <- dds %>% .get_detection_call(
     factor, grp1, grp2, active_exprs, exprs.norm, detection_matrix ) %>%
     .[gene.id]
 
@@ -347,25 +347,25 @@ significant <- function(object, fdr = 0.05, fc = 1.5,
 mark_significant <- function(res, log2.foldchange = 0, pvalue = 0.05){
   # Check if lfc is above cutoff
   # Consider lfc sign to decide up and down genes
-  lfc.ok <- (abs(res$log2FoldChange)) >= log2.foldchange
-  lfc.sign <- sign(res$log2FoldChange)
+  lfc.ok <- (abs(res@df$log2FoldChange)) >= log2.foldchange
+  lfc.sign <- sign(res@df$log2FoldChange)
   # Check if pvalue is below 0.05
   pval.ok <- ifelse(
-    is.na(res$padj), FALSE,
-    res$padj <= pvalue
+    is.na(res@df$padj), FALSE,
+    res@df$padj <= pvalue
   )
   # Detect significant genes
-  if(!is.null(res$detection_call))
+  if(is.null(res@df$detection_call))
     gn.significant <- (lfc.ok & pval.ok) %>%
     as.numeric()
   else
-  gn.significant <- (lfc.ok & pval.ok & res$detection_call == 1) %>%
+    gn.significant <- (lfc.ok & pval.ok & res@df$detection_call == 1) %>%
     as.numeric()
 
   # Significance
   # 1 = up, -1 = down & 0 = NS
   significance <- gn.significant*lfc.sign
-  res$significance <- significance
+  res@df$significance <- significance
   res
 }
 

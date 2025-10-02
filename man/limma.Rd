@@ -23,7 +23,7 @@ lm_results(
 results_names(object)
 }
 \arguments{
-\item{eset}{an object of class ExpressionSet or a list with two components including data and samples.
+\item{eset}{an object of class ExpressionSet, SummarizedExperiment, or a list with two components including data and samples.
 eset must contain the information about samples.}
 
 \item{design}{a formula which expresses how the expression for each gene depend on the variables in the sample data.

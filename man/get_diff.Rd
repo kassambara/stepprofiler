@@ -19,6 +19,7 @@ get_diff_1(
   active_exprs = 1,
   count.norm = NULL,
   exprs.norm = NULL,
+  detection_matrix = NULL,
   verbose = TRUE,
   ...
 )
@@ -33,6 +34,7 @@ get_diff_2(
   active_exprs = 1,
   count.norm = NULL,
   exprs.norm = NULL,
+  detection_matrix = NULL,
   verbose = TRUE,
   ...
 )
@@ -47,6 +49,7 @@ get_diff_n(
   active_exprs = 1,
   count.norm = NULL,
   exprs.norm = NULL,
+  detection_matrix = NULL,
   merge = FALSE,
   verbose = TRUE,
   ...
@@ -62,6 +65,7 @@ get_diff_pwc(
   active_exprs = 1,
   count.norm = NULL,
   exprs.norm = NULL,
+  detection_matrix = NULL,
   merge = FALSE,
   verbose = TRUE,
   ...
@@ -99,6 +103,10 @@ is 0 (the gene is not actively expressed) or 1 (the gene is actively expressed).
 Only used for computing the detection call when active_expression is not NULL.}
 
 \item{exprs.norm}{a data frame containing the normalized gene expression data. An alias of count.norm.}
+
+\item{detection_matrix}{a matrix or data frame with proteins as rows and samples as columns,
+containing detection calls (0 = not detected, 1 = detected). If provided, takes priority over
+active_exprs threshold computation. Useful for proteomics data where detection calls may be pre-computed.}
 
 \item{verbose}{logical value; if TRUE the progression is shown. Default is TRUE.}
 
