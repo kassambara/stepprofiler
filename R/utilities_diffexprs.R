@@ -98,8 +98,14 @@
 .samples <- function(dds){
   if(inherits(dds, "DESeqDataSet"))
     res <- as.data.frame(SummarizedExperiment::colData(dds))
-  else if("lm_fit" %in% class(dds))
-    res <- as.data.frame(dds$samples)
+  else if("lm_fit" %in% class(dds)) {
+    # Handle enhanced lm_fit (from SummarizedExperiment) vs traditional lm_fit
+    if(!is.null(dds$sample_data)) {
+      res <- as.data.frame(dds$sample_data)
+    } else {
+      res <- as.data.frame(dds$samples)
+    }
+  }
   else stop("Can't handle an object of class ", class(dds))
   res
 }
@@ -108,8 +114,14 @@
 .data_norm <- function(dds){
   if(inherits(dds, "DESeqDataSet"))
     res<- as.data.frame(round(DESeq2::counts(dds, normalized=TRUE),2))
-  else if("lm_fit" %in% class(dds))
-    res <- dds$data
+  else if("lm_fit" %in% class(dds)) {
+    # Handle enhanced lm_fit (from SummarizedExperiment) vs traditional lm_fit
+    if(!is.null(dds$expression_matrix)) {
+      res <- as.data.frame(dds$expression_matrix)
+    } else {
+      res <- dds$data
+    }
+  }
   else if(inherits(dds, "SummarizedExperiment"))
     res <- as.data.frame(SummarizedExperiment::assay(dds))
   else stop("Can't handle an object of class ", class(dds))
@@ -265,8 +277,20 @@
   if(is.null(count.norm))  count.norm <- exprs.norm
 
   samples <- .samples(dds)
-  detection_call <- rep(1, nrow(dds))
-  names(detection_call) <- rownames(dds)
+
+  # Get gene/protein names and count - handle enhanced vs traditional lm_fit
+  if("lm_fit" %in% class(dds) && !is.null(dds$expression_matrix)) {
+    # Enhanced lm_fit from SummarizedExperiment
+    gene_names <- rownames(dds$expression_matrix)
+    n_genes <- nrow(dds$expression_matrix)
+  } else {
+    # Traditional lm_fit or other objects
+    gene_names <- rownames(dds)
+    n_genes <- nrow(dds)
+  }
+
+  detection_call <- rep(1, n_genes)
+  names(detection_call) <- gene_names
 
   # Priority 1: Use detection_matrix if provided
   if(!is.null(detection_matrix)){
@@ -277,7 +301,7 @@
     detection_subset <- detection_matrix[, rownames(sples), drop = FALSE]
 
     # Check if detected in at least one of the comparison groups
-    detection_call <- apply(detection_subset, 1, max)[rownames(dds)]
+    detection_call <- apply(detection_subset, 1, max)[gene_names]
     detection_call[is.na(detection_call)] <- 0  # Handle any NAs as not detected
   }
   # Priority 2: Use active_exprs threshold (existing logic)
@@ -290,7 +314,7 @@
     grps <- droplevels(sples[, factor])
     exprs <- count.norm[, rownames(sples), drop = FALSE]
 
-    detection_call <- apply(expressed(exprs,  grps, cutoff = active_exprs), 1, max)[rownames(dds)]
+    detection_call <- apply(expressed(exprs,  grps, cutoff = active_exprs), 1, max)[gene_names]
     detection_call <- detection_call
   }
   # Priority 3: Default - all detected (detection_call already set to 1)
