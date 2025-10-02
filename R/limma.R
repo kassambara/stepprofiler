@@ -53,7 +53,7 @@ NULL
 #' }
 #' @name limma
 #' @rdname limma
-#' @param eset an object of class ExpressionSet or a list with two components including data and samples.
+#' @param eset an object of class ExpressionSet, SummarizedExperiment, or a list with two components including data and samples.
 #' eset must contain the information about samples.
 #' @param design a formula which expresses how the expression for each gene depend on the variables in the sample data.
 #' e.g.: ~ 0 + group (design with multiple groups ),  ~ group + condition (design with multiple variables)
@@ -62,12 +62,17 @@ NULL
 #' @export
 lm_fit <- function(eset, design, logged2){
 
-  if(!inherits(eset, c("ExpressionSet", "list")))
-    stop("eset must be an object of class ExpressionSet or a list with two components including data and samples.")
+  if(!inherits(eset, c("ExpressionSet", "SummarizedExperiment", "list")))
+    stop("eset must be an object of class ExpressionSet, SummarizedExperiment, or a list with two components including data and samples.")
+
   # Data and samples
   if(inherits(eset, "ExpressionSet")){
     data <- Biobase::exprs(eset)
     samples <- Biobase::pData(eset)
+  }
+  else if(inherits(eset, "SummarizedExperiment")){
+    data <- SummarizedExperiment::assay(eset)
+    samples <- as.data.frame(SummarizedExperiment::colData(eset))
   }
   else{
     data <- eset[[1]]

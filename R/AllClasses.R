@@ -2,7 +2,7 @@
 
 #' @rdname DE_Results
 #' @export
-setClass("DE_Results", contains = "DataFrame")
+setClass("DE_Results", slots = list(df = "DFrame"))
 
 #' DE_Results object and constructor
 #'
@@ -18,7 +18,8 @@ setClass("DE_Results", contains = "DataFrame")
 #' @rdname DE_Results
 #' @export
 DE_Results <- function(DataFrame) {
-  methods::new("DE_Results", DataFrame)
+  if (!is(DataFrame, "DFrame")) DataFrame <- S4Vectors::DataFrame(DataFrame)
+  new("DE_Results", df = DataFrame)
 }
 
 
