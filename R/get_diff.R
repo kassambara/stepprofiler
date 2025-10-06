@@ -14,7 +14,7 @@ NULL
 #' \item \bold{get_diff_pwc()}: Pairwise comparisons (pwc) between sample classes in grp1 (e.g.: grp1 = c("A", "B", ...))
 #' and sample classes in grp2 (e.g.: grp2 = c("C", "D", ...) ). Can do all the above mentioned type of analyses.
 #' It's an alias of get_diff_n(), get_diff_1( ) and get_diff_2().
-#' \item \bold{significant()}: Take an object of class "get_diff", "lm_results" or "DESeqResult" and returns
+#' \item \bold{significant()}: Take an object of class "DE_Results", "GetDiff_Results", "lm_results" or "DESeqResult" and returns
 #' significantly differentially expressed genes with a given cutoff for false discovery rate
 #' and fold change.
 #' }
@@ -100,7 +100,7 @@ NULL
 #'
 #' @return
 #' \itemize{
-#' \item The functions get_diff_*() returns an object of class DESeqResults (see ?DESeq2::results) and "get_diff" which contains
+#' \item The functions get_diff_*() returns an object of class DESeqResults (see ?DESeq2::results) and "GetDiff_Results" which contains
 #' the following columns: baseMean, log2FoldChange, lfcSE, stat, pvalue, padj, detection_call and significance.
 #' To see the description of the columns use the function mcols(res, use.names = TRUE), where res is the
 #' result of get_diff_*().\cr\cr
@@ -191,14 +191,15 @@ get_diff_2 <- function(dds, factor, grp1, grp2,
   res <- dds %>% .results(c(factor, grp1, grp2), alpha = 0.05, ...)
   gene.id <- rownames(res)
   # Mark genes that are actively expressed
-  res@df$detection_call <- dds %>% .get_detection_call(
+  res$detection_call <- dds %>% .get_detection_call(
     factor, grp1, grp2, active_exprs, exprs.norm, detection_matrix ) %>%
     .[gene.id]
 
   # Mark significant genes
   res <- res %>% mark_significant(log2.foldchange = log2(fc), pvalue = alpha)
   res <- .set_mcols(res) # description of column names
-  structure(res, class = c(class(res), "get_diff"))
+  res <- GetDiff_Results(res)
+  res
 }
 
 
@@ -230,7 +231,7 @@ get_diff_n <- function(dds, factor, grp1, grp2 = NULL, alpha = 0.05, fc = 1.5,
     res$detection_call <- .get_detection_call(dds, factor, grp1, grp2,
                                               active_exprs, exprs.norm, detection_matrix )[rownames(res)]
     res$significance <- .get_significance(res, alpha = alpha, fc = fc)
-    res <- structure(res, class = c(class(res), "get_diff"))
+    res <- GetDiff_Results(res)
   }
   else if(!merge) res <- get_diff_pwc (dds, factor = factor, grp1 = grp1, grp2 = grp2,
                         alpha = alpha, fc = fc, active_exprs = active_exprs,
@@ -295,7 +296,7 @@ get_diff_pwc <- function(dds, factor, grp1, grp2 = NULL, alpha = 0.05, fc = 1.5,
     res$padj <- padj[rownames(res)]
     res$log2FoldChange <- log2fcs
     res$significance <- .get_significance(res, alpha = alpha, fc = fc)
-    res <- structure(res, class = c(class(res), "get_diff"))
+    res <- GetDiff_Results(res)
   }
   res <- .set_mcols(res) # description of column names
   res
@@ -317,7 +318,7 @@ significant <- function(object, fdr = 0.05, fc = 1.5,
                         orderby = c("padj", "lfc"))
 {
 
-  if(!inherits(object, c("get_diff", "DESeqResults", "DE_Results")))
+  if(!inherits(object, c("DESeqResults", "DE_Results", "GetDiff_Results")))
     stop("The argument object must be an object of class get_diff, DE_Results or DESeqResults.")
   object <- as.data.frame(object)
 
@@ -347,25 +348,25 @@ significant <- function(object, fdr = 0.05, fc = 1.5,
 mark_significant <- function(res, log2.foldchange = 0, pvalue = 0.05){
   # Check if lfc is above cutoff
   # Consider lfc sign to decide up and down genes
-  lfc.ok <- (abs(res@df$log2FoldChange)) >= log2.foldchange
-  lfc.sign <- sign(res@df$log2FoldChange)
+  lfc.ok <- (abs(res$log2FoldChange)) >= log2.foldchange
+  lfc.sign <- sign(res$log2FoldChange)
   # Check if pvalue is below 0.05
   pval.ok <- ifelse(
-    is.na(res@df$padj), FALSE,
-    res@df$padj <= pvalue
+    is.na(res$padj), FALSE,
+    res$padj <= pvalue
   )
   # Detect significant genes
-  if(is.null(res@df$detection_call))
+  if(is.null(res$detection_call))
     gn.significant <- (lfc.ok & pval.ok) %>%
     as.numeric()
   else
-    gn.significant <- (lfc.ok & pval.ok & res@df$detection_call == 1) %>%
+    gn.significant <- (lfc.ok & pval.ok & res$detection_call == 1) %>%
     as.numeric()
 
   # Significance
   # 1 = up, -1 = down & 0 = NS
   significance <- gn.significant*lfc.sign
-  res@df$significance <- significance
+  res$significance <- significance
   res
 }
 

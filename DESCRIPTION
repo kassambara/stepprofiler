@@ -47,7 +47,8 @@ biocViews: Software, Visualization, Sequencing
 Repository: Bioconductor
 Collate:
     'ALL_bcrneg.R'
-    'AllClasses.R'
+    'DE_Results-class.R'
+    'GetDiff_Results-class.R'
     'biomart.hs.genes.R'
     'summarize.R'
     'expressed.R'

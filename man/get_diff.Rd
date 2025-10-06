@@ -124,7 +124,7 @@ significant genes by the adjusted p-value or the log2FoldChange}
 }
 \value{
 \itemize{
-\item The functions get_diff_*() returns an object of class DESeqResults (see ?DESeq2::results) and "get_diff" which contains
+\item The functions get_diff_*() returns an object of class DESeqResults (see ?DESeq2::results) and "GetDiff_Results" which contains
 the following columns: baseMean, log2FoldChange, lfcSE, stat, pvalue, padj, detection_call and significance.
 To see the description of the columns use the function mcols(res, use.names = TRUE), where res is the
 result of get_diff_*().\cr\cr
@@ -154,7 +154,7 @@ using pairewise analysis or not (see details section).
 \item \bold{get_diff_pwc()}: Pairwise comparisons (pwc) between sample classes in grp1 (e.g.: grp1 = c("A", "B", ...))
 and sample classes in grp2 (e.g.: grp2 = c("C", "D", ...) ). Can do all the above mentioned type of analyses.
 It's an alias of get_diff_n(), get_diff_1( ) and get_diff_2().
-\item \bold{significant()}: Take an object of class "get_diff", "lm_results" or "DESeqResult" and returns
+\item \bold{significant()}: Take an object of class "DE_Results", "GetDiff_Results", "lm_results" or "DESeqResult" and returns
 significantly differentially expressed genes with a given cutoff for false discovery rate
 and fold change.
 }
